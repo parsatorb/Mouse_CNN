@@ -117,15 +117,6 @@ class Network:
                 out_sigma = get_out_sigma(e[0].area, e[0].depth, e[1].area, e[1].depth)
             out_size = in_size * out_sigma
             self.area_size[e[1].area+e[1].depth] = out_size
-<<<<<<< HEAD:mousenet/cmouse/network.py
-            out_channels = out_anat_layer.num/out_size**2
-            # if self.retinotopic:
-            #     pixel_area_ratio = self.calculate_pixel_area_source_target_ratio(architecture, in_layer_name, out_layer_name)
-            #     out_channels = out_channels/pixel_area_ratio
-            out_channels = np.floor(out_channels)
-
-            
-=======
 
             if SUBFIELDS:
                 pixel_area = calculate_pixel_area_with_visual_field(architecture, e[1].area, e[1].depth)
@@ -133,7 +124,6 @@ class Network:
             else:
                 out_channels = np.floor(out_anat_layer.num/out_size**2)
 
->>>>>>> 19836412a2774fb3614ffe07408a63980f07b7a0:cmouse/network.py
             architecture.set_num_channels(e[1].area, e[1].depth, out_channels)
             self.area_channels[e[1].area+e[1].depth] = out_channels
             

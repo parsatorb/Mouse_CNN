@@ -183,13 +183,6 @@ class MouseNetCompletePool(nn.Module):
             if area == 'LGNd' or area == 'LGNv':
                 layer = self.network.find_conv_source_target('input', area)
                 layer_name = layer.source_name + layer.target_name
-<<<<<<< HEAD:mousenet/cmouse/mousenet_complete_pool.py
-                calc_graph[area] =  nn.ReLU(inplace=True)(
-                        self.BNs[area](
-                            self.Convs[layer_name](x)
-                        )
-                    )
-=======
 
                 if SUBFIELDS:
                     left, width, bottom, height = self.sub_indices[layer_name]
@@ -198,7 +191,7 @@ class MouseNetCompletePool(nn.Module):
                 else:
                     calc_graph[area] =  nn.ReLU(inplace=True)(self.BNs[area](self.Convs[layer_name](x)))
 
->>>>>>> 19836412a2774fb3614ffe07408a63980f07b7a0:cmouse/mousenet_complete_pool.py
+
                 continue
 
             for layer in self.network.layers:
@@ -209,23 +202,6 @@ class MouseNetCompletePool(nn.Module):
                     # if mask is None:
                     #     mask = 1
                     layer_name = layer.source_name + layer.target_name
-<<<<<<< HEAD:mousenet/cmouse/mousenet_complete_pool.py
-                    # if isinstance(mask, int):
-                    #     print(area, mask)
-                    # else:
-                    #     print(area, mask.shape)
-                    if area not in calc_graph:
-                        calc_graph[area] = self.Convs[layer_name](
-                                calc_graph[layer.source_name]
-                            )
-                    else:
-                        calc_graph[area] = calc_graph[area] + self.Convs[layer_name](calc_graph[layer.source_name])
-                        calc_graph[area] = nn.ReLU(inplace=True)(
-                            self.BNs[area](
-                                calc_graph[area]
-                            )
-                        )
-=======
 
                     if SUBFIELDS:
                         left, width, bottom, height = self.sub_indices[layer_name] #TODO: incorporate padding here
@@ -239,7 +215,6 @@ class MouseNetCompletePool(nn.Module):
                     else:
                         calc_graph[area] = calc_graph[area] + layer_output
             calc_graph[area] = nn.ReLU(inplace=True)(self.BNs[area](calc_graph[area]))
->>>>>>> 19836412a2774fb3614ffe07408a63980f07b7a0:cmouse/mousenet_complete_pool.py
         
         if len(area_list) == 1:
             if flatten:
