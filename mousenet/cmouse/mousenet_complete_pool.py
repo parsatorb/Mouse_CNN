@@ -102,13 +102,12 @@ class MouseNetCompletePool(nn.Module):
     """
     torch model constructed by parameters provided in network.
     """
-    def __init__(self, network, mask=3, retinomap=None):
+    def __init__(self, network, mask=3):
         super(MouseNetCompletePool, self).__init__()
         self.Convs = nn.ModuleDict()
         self.BNs = nn.ModuleDict()
         self.network = network
         # self.layer_masks = dict()
-        self.retinomap = retinomap
         
         G, _ = network.make_graph()
         self.top_sort = list(nx.topological_sort(G))

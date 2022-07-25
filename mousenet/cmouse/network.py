@@ -1,3 +1,4 @@
+from re import A
 import numpy as np
 import networkx as nx
 from .anatomy import gen_anatomy
@@ -111,18 +112,17 @@ class Network:
             
             out_anat_layer = anet.find_layer(e[1].area, e[1].depth)
             
-            out_sigma = get_out_sigma(e[0].area, e[0].depth, e[1].area, e[1].depth)
+            if self.retinotopic:
+                out_sigma = np.sqrt(self.calculate_pixel_area_source_target_ratio(in_layer_name, out_layer_name))
+            else:
+                out_sigma = get_out_sigma(e[0].area, e[0].depth, e[1].area, e[1].depth)
             out_size = in_size * out_sigma
             self.area_size[e[1].area+e[1].depth] = out_size
-            out_channels = np.floor(out_anat_layer.num/out_size**2)
-            if self.retinotopic:
-                project_root = pathlib.Path(__file__).parent.parent.resolve()
-                mask_pickle = ''.join(x for x in in_layer_name.lower() if x.isalpha())
-                mask_path = os.path.join(project_root, "retinotopics", "mask_areas", f"{mask_pickle}.pkl")
-                if os.path.exists(mask_path):
-                    mask_size = pickle.load(open(mask_path, "rb"))
-                    out_channels = out_channels*int((32*32)/mask_size)
-
+            out_channels = out_anat_layer.num/out_size**2
+            # if self.retinotopic:
+            #     pixel_area_ratio = self.calculate_pixel_area_source_target_ratio(architecture, in_layer_name, out_layer_name)
+            #     out_channels = out_channels/pixel_area_ratio
+            out_channels = np.floor(out_channels)
 
             
             architecture.set_num_channels(e[1].area, e[1].depth, out_channels)
@@ -159,7 +159,17 @@ class Network:
         nx.draw(G, pos, node_size=node_size, node_color=node_color, edge_color=edge_color,alpha=0.4)
         nx.draw_networkx_labels(G, pos, node_label_dict, font_size=10,font_weight=640, alpha=0.7, font_color='black')
         nx.draw_networkx_edge_labels(G, pos, edge_label_dict, font_size=20, font_weight=640,alpha=0.7, font_color='red')
-        plt.show()  
+        plt.show()
+
+    def calculate_pixel_area_with_visual_field(self, architecture, area):
+        x1, y1, x2, y2 = architecture.get_visual_field_shape(area)
+        area = (x2 - x1)*(y2 - y1)
+        return area
+
+    def calculate_pixel_area_source_target_ratio(self, architecture, source_area, target_area):
+        in_layer_pixel_area = self.calculate_pixel_area_with_visual_field(architecture, source_area)
+        out_layer_pixel_area = self.calculate_pixel_area_with_visual_field(architecture, target_area)
+        return out_layer_pixel_area/in_layer_pixel_area
 
 
 def gen_network_from_anatomy(architecture):

@@ -39,9 +39,6 @@ def load(architecture, pretraining=None):
     mousenet = MouseNetCompletePool(net)
         
     retinomap = None
-    if architecture =="retinotopic":
-        with open(os.path.join(path, "retinotopics", "retinomap.pkl"), "rb") as file:
-            retinomap = pickle.load(file)
     
     model = MouseNetCompletePool(net, retinomap = retinomap)
     

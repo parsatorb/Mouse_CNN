@@ -152,13 +152,17 @@ class Data:
     def get_visual_field_shape(self, area):
         """
         :param area: visual area name
-        :return: (height, width) of visual field for that area
+        :return: (height, width) of visual field for that area, relative to a reference 64x64
+        input video representing a width 90 and height 60 degrees of visual field. 
         """
         # We return a constant for simplicity. This is based on the range of the scale
         # bars in Figure 9C,D of ﻿J. Zhuang et al., “An extended retinotopic map of mouse cortex,”
         # Elife, p. e18372, 2017. In fact different areas have different visual field shapes and
         # offsets, but we defer this aspect to future models.
-        return (55, 90)
+        project_root = pathlib.Path(__file__).parent.parent.resolve()
+        df = pd.read_csv(os.path.join(project_root, "retinotopics", "retinomap.csv"))
+        df["name"] = df["name"].apply(lambda x: x.lower())
+        return df[df["name"] == area.lower()]["x1", "y1", "x2", "y2"]
 
 
 # class Ero2018:
