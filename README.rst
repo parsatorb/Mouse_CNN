@@ -24,9 +24,6 @@ Folder Structure
   │    ├── mouse_cnn/ - Code related to deriving architecture from data
   │    │   └── __init__.py
   │    │
-  │    ├── retinotopics/ - Code related to calculating visual subfields
-  │    │   └── __init__.py
-  │    │
   │    └── /
   │        ├── loader.py - load function for loading a mousenet model with a particular initialization
   │        └── __init__.py - manages pathing for saving models + logs
@@ -58,7 +55,7 @@ To load a mousenet model
   $ import mousenet
   $ model = mousenet.load(architecture="stock", pretraining=None)
   
-Architecture can be one of "stock" or "retinotopic" for visual subfields. Pretraining can be on of: None, "kaiming" for kaiming initialization, or "Imagenet" for imagenet pretraining.
+Architecture can be one of "stock" or "retinotopic" for visual subfields. Pretraining can be one of: None, "kaiming" for kaiming initialization, or "Imagenet" for imagenet pretraining.
 
 
 To test the code
