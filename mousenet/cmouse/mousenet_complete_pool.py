@@ -107,19 +107,10 @@ class MouseNetCompletePool(nn.Module):
         self.Convs = nn.ModuleDict()
         self.BNs = nn.ModuleDict()
         self.network = network
-        # self.layer_masks = dict()
         self.retinomap = retinomap
         
         G, _ = network.make_graph()
         self.top_sort = list(nx.topological_sort(G))
-
-
-        # if self.retinomap is not None:
-        #     for layer in self.top_sort:
-        #         self.layer_masks[layer] = get_retinotopic_mask(layer, self.retinomap)
-        # else:
-        #     for layer in self.top_sort:
-        #         self.layer_masks[layer] = torch.ones(32, 32) 
 
         for layer in network.layers:
             params = layer.params
@@ -177,25 +168,12 @@ class MouseNetCompletePool(nn.Module):
             if area == 'LGNd' or area == 'LGNv':
                 layer = self.network.find_conv_source_target('input', area)
                 layer_name = layer.source_name + layer.target_name
-                calc_graph[area] =  nn.ReLU(inplace=True)(
-                        self.BNs[area](
-                            self.Convs[layer_name](x)
-                        )
-                    )
+                calc_graph[area] =  nn.ReLU(inplace=True)(self.BNs[area](self.Convs[layer_name](x)))
                 continue
 
             for layer in self.network.layers:
                 if layer.target_name == area:
-                    # mask = None
-                    # if layer.source_name in self.layer_masks:
-                    #     mask = self.layer_masks[layer.source_name]
-                    # if mask is None:
-                    #     mask = 1
                     layer_name = layer.source_name + layer.target_name
-                    # if isinstance(mask, int):
-                    #     print(area, mask)
-                    # else:
-                    #     print(area, mask.shape)
                     if area not in calc_graph:
                         calc_graph[area] = self.Convs[layer_name](
                                 calc_graph[layer.source_name]
