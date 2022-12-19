@@ -4,17 +4,22 @@ import os
 from .cmouse.mousenet_complete_pool import MouseNetCompletePool
 import torch.nn as nn
 import pathlib
-from .cmouse.anatomy import gen_anatomy
-from .mouse_cnn.architecture import Architecture
-from .cmouse import network
+#from .cmouse.anatomy import gen_anatomy
+#from .mouse_cnn.architecture import Architecture
+#from .cmouse import network
 import pathlib
+import pickle
 import os, pdb
 
 def generate_net(retinotopic=False):
     root = pathlib.Path(__file__).parent.resolve()
     cached = os.path.join(root, "data_files", f"net_cache_{'retino' if retinotopic else ''}.pkl")
-    if os.path.isfile(cached):
-        return network.load_network_from_pickle(cached)
+    # if os.path.isfile(cached):
+    with open(cached, "rb") as file:
+        net = pickle.load(file)
+    return net
+        
+    # return network.load_network_from_pickle(cached)
     architecture = Architecture()
     anet = gen_anatomy(architecture)
     net = network.Network(retinotopic=retinotopic)
