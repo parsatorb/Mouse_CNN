@@ -187,8 +187,8 @@ class MouseNetCompletePool(nn.Module):
                     calc_graph[area]
                 )
             )
-            if calc_graph[area].sum() == 0:
-                pdb.set_trace()
+            # if calc_graph[area].sum() == 0:
+            #     pdb.set_trace()
         
         if len(area_list) == 1:
             if flatten:
